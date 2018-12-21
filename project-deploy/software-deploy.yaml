@@ -1,0 +1,69 @@
+---
+- hosts: hawksley
+# set the php version that needs to run on the server here
+# and ansible will pull in the relevant vars file for that version
+# it does not matter if php is currently on the image as this playbook
+# completely uninstalls any version and replaces it with the version
+# specified here.
+# thad@spiremedia.com - 05/13/15
+  vars:
+    phpversion: 7
+  vars_files:
+    - software-vars-php{{ phpversion }}.yaml
+  gather_facts: true
+  remote_user: ec2-user
+  become: yes
+
+  tasks:
+  - name: Install EPEL repo.
+    yum: name={{ repo_package }} state=latest
+    
+  - name: enable EPEL.
+    shell: yum-config-manager --enable {{ repo_name }}
+
+  - name: clean up any existing php.
+    yum: name=php* state=absent
+  
+  - name: clean up any existing php54.
+    yum: name=php54* state=absent
+  
+  - name: clean up any existing php55.
+    yum: name=php55* state=absent
+  
+  - name: clean up any existing php56.
+    yum: name=php56* state=absent
+    
+  - name: Next - update all core packages
+    yum: name=* state=latest
+  
+  - name: Then, install required system packages.
+    yum: name={{ item }} state=latest
+    with_items: "{{ system_packages }}"
+
+  - name: Now, install required npm packages.
+    npm: name={{ item }} global=yes
+    with_items: "{{ npm_packages }}"
+    
+  - name: gem update.
+    shell: gem update --system
+    
+  - name: install compass.
+    shell: gem install compass
+    
+  - name: install compass normalize.
+    shell: gem install compass-normalize
+    
+  - name: install autoprefixer-rails.
+    shell: gem install autoprefixer-rails
+  
+  #- name: Install apache security configuration file.
+  #  copy: src=conf/x-secure.conf dest=/etc/httpd/conf.d/x-secure.conf
+    
+  - name: And, restart httpd services.
+    service: name=httpd state=restarted
+    
+  - name: Almost done - now enable httpd service at boot.
+    shell: chkconfig httpd on
+    
+  #- name: Finally, enable mysqld service at boot.
+  #  shell: chkconfig mysqld on

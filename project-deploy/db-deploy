@@ -1,0 +1,29 @@
+---
+# ^^^ YAML documents must begin with the document separator "---"
+#
+#### Example docblock, I like to put a descriptive comment at the top of my 
+#### playbooks.
+#
+# Overview: Playbook to create directory, upload private repo keys, deploy git project, seed database, and configure apache
+# Applies to: SpireMedia AWS Linux AMIs
+# Description: 
+#   Uses variables from the pro-ject-vars.yaml companion file
+#   Files to load on the server live in the conf/ subdirectory
+###########
+- hosts: datacenters
+  vars_files:
+    - project-vars.yaml
+  gather_facts: true
+  remote_user: ec2-user
+  become: yes
+
+  tasks:
+  - name: push sql dump to server.
+    copy: src=conf/{{ project_name }}.sql dest={{ project_root }}/{{ project_name }}.sql
+    
+  - name: refresh database.
+    shell: mysql -u {{ mysql_user }} -p{{ mysql_password }} {{ project_name }} < {{ project_root }}/{{ project_name }}.sql
+  
+  - name: Restart services.
+    service: name=httpd state=restarted
+  

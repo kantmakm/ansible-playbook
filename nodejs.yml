@@ -1,0 +1,26 @@
+# Attempting to setup node.js 
+# Josh Vaughan
+#Installs EPEL And Remi Keys/Repos and then Installs Node.js w/ all dependencies
+
+-hosts:all
+
+tasks:
+
+# Import EPEL GPG Key - see: https://fedoraproject.org/keys
+wget https://fedoraproject.org/static/0608B895.txt \ -O /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+
+# Import Remi GPG key - see: http://rpms.famillecollet.com/RPM-GPG-KEY-remi
+wget http://rpms.famillecollet.com/RPM-GPG-KEY-remi \ -O /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+
+# Install EPEL and Remi repos.
+rpm -Uvh --quiet \ http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -Uvh --quiet \ http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+
+# Install Node.js (npm plus all its dependencies).
+yum --enablerepo=epel install node
+yum: name=npm state=present enablerepo=epel
+
+# Install forever (to run node.js apps)
+npm: name=forever global=yes state=latest

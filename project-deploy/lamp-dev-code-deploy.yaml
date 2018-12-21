@@ -1,0 +1,55 @@
+---
+# ^^^ YAML documents must begin with the document separator "---"
+#
+#### Example docblock, I like to put a descriptive comment at the top of my 
+#### playbooks.
+#
+# Overview: Playbook to create directory, upload private repo keys, deploy git project, seed database, and configure apache
+# Applies to: SpireMedia AWS Linux AMIs
+# Description: 
+#   Uses variables from the pro-ject-vars.yaml companion file
+#   Files to load on the server live in the conf/ subdirectory
+###########
+- hosts: testservers
+  vars_files:
+    - lamp-dev-project-vars.yaml
+  gather_facts: false
+  remote_user: ec2-user
+  become: yes
+
+  tasks:
+  - name: Create the project directory.
+    file: state=directory path={{ project_root }}
+
+  - name: Update the project directory.
+    file: group={{ www_user }} owner={{ www_user }} mode=755 state=directory path={{ project_root }}
+
+  - name: Install apache configuration file.
+    copy: src=conf/{{ project_name }}.conf dest=/etc/httpd/conf.d/{{ project_name }}.conf
+    
+  - name: Pull sources from the repository.
+    git: repo={{ project_repo }} dest={{ project_root }} version=master
+
+  - name: Change ownership to apache.
+    shell: chown -R {{ www_user }}:{{ www_user }} {{ project_root }}
+
+  - name: Create the project staging directory.
+    file: state=directory path={{ project_root }}-staging
+
+  - name: Update the project directory.
+    file: group={{ www_user }} owner={{ www_user }} mode=755 state=directory path={{ project_root }}-staging
+    
+  - name: Pull sources from the staging repository.
+    git: repo={{ project_repo }} dest={{ project_root }}-staging version=staging
+
+  - name: Change owner tp apache.
+    shell: chown -R {{ www_user }}:{{ www_user }} {{ project_root }}-staging
+  
+  - name: push sql dump to server.
+    copy: src=conf/{{ project_name }}.sql dest={{ project_root }}/{{ project_name }}.sql
+    
+  - name: Create database.
+    shell: mysql -u {{ mysql_user }} -p{{ mysql_password }} < {{ project_root }}/{{ project_name }}.sql
+  
+  - name: Restart services.
+    service: name=httpd state=restarted

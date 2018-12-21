@@ -1,0 +1,10 @@
+---
+project_name: datacenters
+project_root: /var/www/html/datacenters
+project_repo: git@bitbucket.org:spiremedia/datacenters.git
+conf_dir: conf
+home_dir: /root
+www_user: apache
+mysql_user: root
+mysql_password: sp13m
+branch: master

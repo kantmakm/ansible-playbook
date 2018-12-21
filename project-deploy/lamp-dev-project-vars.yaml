@@ -1,0 +1,27 @@
+---
+project_name: 2-10
+project_root: /var/www/html/2-10
+project_repo: git@bitbucket.org:spiremedia/2-10.git
+conf_dir: /var/www/html/masterplaybook/project-deploy/conf
+home_dir: /root
+www_user: apache
+mysql_user: root
+mysql_password: sp13m
+branch: master
+system_packages:
+  - git
+  - httpd24
+  - httpd24-devel
+  - openssl
+  - mod24_ssl
+  - php54
+  - mysql55-server
+  - redis
+  - sendmail
+  - npm
+  - nodejs
+  - mongodb
+npm_packages:
+  - npmlog
+  - node-uuid
+initfiles:

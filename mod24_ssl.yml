@@ -1,0 +1,10 @@
+---
+- hosts: ec2-lampservers
+  remote_user: ec2-user
+  become: yes
+  tasks:
+  - name: mod24_ssl install
+    yum: name=mod24_ssl state=present
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted

@@ -1,0 +1,52 @@
+---
+repo_package: epel-release
+repo_name: epel
+system_packages:
+  - git
+  - httpd24
+  - httpd24-tools 
+  - httpd24-devel
+  - mod24_ssl
+  - php56
+  - php56-devel
+  - php56-bcmath
+  - php56-dba
+  - php56-dbg
+  - php56-embedded
+  - php56-enchant
+  - php56-gd
+  - php56-gmp
+  - php56-imap
+  - php56-intl
+  - php56-ldap
+  - php56-mbstring
+  - php56-mcrypt
+  - php56-mysqlnd
+  - php56-odbc
+  - php56-opcache
+  - php56-pdo
+  - php56-pecl-apcu
+  - php56-pecl-imagick
+  - php56-pecl-memcached
+  - php56-pecl-oauth
+  - php56-pecl-ssh2
+  - php56-pgsql
+  - php56-pspell
+  - php56-recode
+  - php56-snmp
+  - php56-soap
+  - php56-tidy
+  - php56-xmlrpc
+  - mysql55-server
+  - redis
+  - ruby
+  - ruby-devel
+  - rubygems
+  - npm
+  - nodejs
+  - mongodb
+npm_packages:
+  - bower
+  - npmlog
+  - node-uuid
+  - forever
